@@ -1,0 +1,40 @@
+-- Biblioteca local para funções de teletransporte
+local TeleportLib = {}
+
+function TeleportLib.teleportTo(player, targetPlayer)
+    if player.Character and targetPlayer.Character then
+        player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
+    end
+end
+
+-- Função para criar a tela de seleção de jogadores
+function createPlayerSelectionScreen()
+    local player = game.Players.LocalPlayer
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = player.PlayerGui
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 200, 0, 300)
+    frame.Position = UDim2.new(0.5, -100, 0.5, -150)
+    frame.Parent = screenGui
+
+    local layout = Instance.new("UIListLayout")
+    layout.Parent = frame
+
+    for _, targetPlayer in pairs(game.Players:GetPlayers()) do
+        if targetPlayer ~= player then
+            local button = Instance.new("TextButton")
+            button.Size = UDim2.new(1, 0, 0, 50)
+            button.Text = targetPlayer.Name
+            button.Parent = frame
+
+            button.MouseButton1Click:Connect(function()
+                TeleportLib.teleportTo(player, targetPlayer)
+                screenGui:Destroy()
+            end)
+        end
+    end
+end
+
+-- Chama a função para criar a tela de seleção de jogadores
+createPlayerSelectionScreen()
