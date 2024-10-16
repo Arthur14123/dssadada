@@ -1,8 +1,8 @@
--- Biblioteca local para funções de teletransporte
 local TeleportLib = {}
 
 function TeleportLib.teleportTo(player, targetPlayer)
-    if player.Character and targetPlayer.Character then
+    -- Verifica se os jogadores possuem personagens e se os objetos HumanoidRootPart existem
+    if player.Character and targetPlayer.Character and player.Character:FindFirstChild("HumanoidRootPart") and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
     end
 end
@@ -11,7 +11,7 @@ end
 function createPlayerSelectionScreen()
     local player = game.Players.LocalPlayer
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = player.PlayerGui
+    screenGui.Parent = player:WaitForChild("PlayerGui") -- Garante que PlayerGui existe
 
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0, 200, 0, 300)
@@ -21,6 +21,7 @@ function createPlayerSelectionScreen()
     local layout = Instance.new("UIListLayout")
     layout.Parent = frame
 
+    -- Loop para criar os botões com base nos jogadores disponíveis
     for _, targetPlayer in pairs(game.Players:GetPlayers()) do
         if targetPlayer ~= player then
             local button = Instance.new("TextButton")
@@ -28,9 +29,10 @@ function createPlayerSelectionScreen()
             button.Text = targetPlayer.Name
             button.Parent = frame
 
+            -- Função que conecta o evento de clique do botão
             button.MouseButton1Click:Connect(function()
                 TeleportLib.teleportTo(player, targetPlayer)
-                screenGui:Destroy()
+                screenGui:Destroy() -- Remove a tela após o teletransporte
             end)
         end
     end
